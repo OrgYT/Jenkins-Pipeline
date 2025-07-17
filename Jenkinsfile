@@ -17,18 +17,18 @@ pipeline {
                 stage('NPM Audit - Critical Only') {
                     steps {
                         // Prevent failure from stopping pipeline if vulnerabilities are found
-                        sh 'npm audit --audit-level=critical || true'
+                        sh 'npm audit --audit-level=critical'
                     }
                 }
 
                 stage('OWASP Dependency Check') {
                     steps {
                         dependencyCheck additionalArguments: '''
-                            --scan ./ \
-                            --out ./ \
-                            --format ALL \
-                            --prettyPrint
-                        ''', odcInstallation: 'owasp-10'
+                            --scan \'./ \'
+                            --out \'./ \'
+                            --format \'ALL\'
+                            --prettyPrint''', odcInstallation: 'owasp-10'
+                        
                     }
                 }
             }
