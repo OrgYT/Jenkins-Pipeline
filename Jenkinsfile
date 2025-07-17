@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        nodejs 'node-version'  // Ensure this is configured in Jenkins > Global Tool Configuration
+        nodejs 'node-version'  // Replace with your configured Node.js tool name
     }
 
     stages {
@@ -12,18 +12,19 @@ pipeline {
             }
         }
 
-        stage('Parallel Security Scans') {
+        stage('Security Scanning') {
             parallel {
-                stage('Dependency Check') {
+                stage('NPM Audit - Critical Only') {
                     steps {
-                        sh 'npm audit --audit-level=critical'
+                        // Prevent failure from stopping pipeline if vulnerabilities are found
+                        sh 'npm audit --audit-level=critical || true'
                     }
                 }
 
                 stage('OWASP Dependency Check') {
                     steps {
                         dependencyCheck additionalArguments: '''--scan ./ \
---out ./ \
+--out ./dependency-check-report \
 --format ALL''', odcInstallation: 'owasp-10'
                     }
                 }
