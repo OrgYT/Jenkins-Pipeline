@@ -1,17 +1,15 @@
-pipeline{
+pipeline {
     agent any
 
-    tools{
-        npm 'node-version'
+    tools {
+        nodejs 'node-version'  // Ensure 'node-version' is configured in Jenkins Global Tool Configuration
     }
 
-    stages{
-        stage('npm dependencies'){
-            steps{
-                sh 'npm install --no audit'
+    stages {
+        stage('Install NPM Dependencies') {
+            steps {
+                sh 'npm install --no-audit'
             }
         }
-
     }
 }
-          
