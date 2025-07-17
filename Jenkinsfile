@@ -31,6 +31,7 @@ pipeline {
 ''', odcInstallation: 'owasp-10'
 
                         dependencyCheckPublisher failedTotalCritical: 1, pattern: 'dependency-check-junit.xml'
+                        publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: './', reportFiles: 'index.html', reportName: 'Dependency HTML Report', reportTitles: 'Report', useWrapperFileDirectly: true])
                     }
                 }
             }
