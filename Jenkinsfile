@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        nodejs 'node-version'  // Ensure 'node-version' is configured in Jenkins Global Tool Configuration
+        nodejs 'node-version' 
     }
 
     stages {
