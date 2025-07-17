@@ -12,17 +12,21 @@ pipeline {
             }
         }
 
-        stage('Dependency Check') {
-            steps {
-                sh 'npm audit --audit-level=critical'
-            }
-        }
+        stage('Parallel Security Scans') {
+            parallel {
+                stage('Dependency Check') {
+                    steps {
+                        sh 'npm audit --audit-level=critical'
+                    }
+                }
 
-        stage('OWASP Dependency Check') {
-            steps {
-                dependencyCheck additionalArguments: '''--scan ./ \
+                stage('OWASP Dependency Check') {
+                    steps {
+                        dependencyCheck additionalArguments: '''--scan ./ \
 --out ./ \
 --format ALL''', odcInstallation: 'owasp-10'
+                    }
+                }
             }
         }
     }
