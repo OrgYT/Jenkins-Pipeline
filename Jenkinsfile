@@ -26,7 +26,7 @@ pipeline {
                         dependencyCheck additionalArguments: '''
                             --scan ./\
                             --out ./\
-                            --format ALL\'
+                            --format ALL\
                             --prettyPrint''', odcInstallation: 'owasp-10'
                         
                     }
