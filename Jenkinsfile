@@ -1,20 +1,17 @@
-pipeline {
+pipeline{
     agent any
 
-    tools {
-        nodejs 'node-version' 
+    tools{
+        npm 'node-version'
     }
 
-    stages {
-        stage('Show Node & NPM Version') {
-            steps {
-                sh '''
-                    node -v
-                    npm -v
-                '''
+    stages{
+        stage('npm dependencies'){
+            steps{
+                sh 'npm install --no audit'
             }
         }
+
     }
 }
-
           
