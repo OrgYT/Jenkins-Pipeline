@@ -39,6 +39,18 @@ pipeline {
                         }
                         junit allowEmptyResults: true, stdioRetention:'', testResults: 'test-results.xml'
                     }
+
+                stage('code coverage'){
+                    steps{
+                         withCredentials([usernamePassword(credentialsId: 'mongodb-credentials', passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USERNAME')]){
+                             catchError(buildResult: 'SUCCESS', message: 'Build failed', stageResult: 'UNSTABLE') {
+                                  sh 'npm run coverage'
+                        }
+                           
+                        }
+                         publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'Coverage/lcov-report', reportFiles: 'index.html', reportName: 'Coverage report', reportTitles: 'coverage', useWrapperFileDirectly: true])
+                        
+                        
                 }
             }
         }
