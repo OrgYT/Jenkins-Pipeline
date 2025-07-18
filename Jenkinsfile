@@ -26,7 +26,7 @@ pipeline {
                 stage('NPM Audit - Critical Only') {
                     steps {
                         // Run npm audit with critical level, but don't fail pipeline on vulnerabilities
-                        sh 'npm audit --audit-level=critical || true'
+                        sh 'npm audit --audit-level=critical'
                     }
                 }
 
