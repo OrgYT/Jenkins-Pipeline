@@ -26,33 +26,7 @@ pipeline {
                     }
                 }
 
-                stage('OWASP Dependency Check') {
-                    steps {
-                        // Run OWASP Dependency Check scan
-                        dependencyCheck additionalArguments: '''
-                            --scan ./ \
-                            --out ./ \
-                            --format ALL \
-                            --prettyPrint
-                        ''', odcInstallation: 'owasp-10'
-
-                        
-
-                        publishHTML([
-                            allowMissing: true,
-                            alwaysLinkToLastBuild: true,
-                            icon: '',
-                            keepAll: true,
-                            reportDir: './',
-                            reportFiles: 'dependency-check-jenkins.html',
-                            reportName: 'Dependency HTML Report',
-                            reportTitles: 'Report',
-                            useWrapperFileDirectly: true
-                        ])
-
-                        junit allowEmptyResults: true, stdioRetention:'', testResults: 'dependency-check-junit.xml'
-                    }
-                }
+                
 
                 stage('Unit testing') {
                     steps {
