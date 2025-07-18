@@ -6,8 +6,9 @@ pipeline {
     }
 
     environment {
-        MONGO_URI = "mongodb+srv://supercluster.d83jj.mongodb.net/superData"
+      MONGO_URI = "mongodb+srv://supercluster.d83jj.mongodb.net/superData"
     }
+
 
     stages {
         stage('Install NPM Dependencies') {
@@ -55,7 +56,7 @@ pipeline {
 
                 stage('Unit testing') {
                     steps {
-                        withCredentials([usernamePassword(credentialsId: 'mongodb-creds', passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USERNAME')]) {
+                        withCredentials([usernamePassword(credentialsId: '', passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USERNAME')]){
                             sh 'npm test'
                         }
                         junit allowEmptyResults: true, stdioRetention:'', testResults: 'test-results.xml'
