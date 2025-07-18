@@ -48,7 +48,7 @@ pipeline {
                             alwaysLinkToLastBuild: false,
                             icon: '',
                             keepAll: false,
-                            reportDir: 'Coverage/lcov-report',
+                            reportDir: 'coverage/lcov-report',
                             reportFiles: 'index.html',
                             reportName: 'Coverage report',
                             reportTitles: 'Coverage',
