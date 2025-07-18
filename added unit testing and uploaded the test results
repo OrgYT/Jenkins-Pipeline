@@ -2,7 +2,10 @@ pipeline {
     agent any
 
     tools {
-        nodejs 'node-version'  // Replace with your configured Node.js tool name
+        nodejs 'node-version'  
+    }
+    environment {
+      MONGO_URI = "mongodb+srv://supercluster.d83jj.mongodb.net/superData"
     }
 
     stages {
@@ -35,6 +38,17 @@ pipeline {
                         junit allowEmptyResults: true, testResults: 'dependency-check-junit.xml'
                     }
                 }
+
+                stage('Unit testing'){
+                    steps {
+                        withCredentials([usernamePassword(credentialsId: 'mongodb-creds', passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USERNAME')]) {
+                            sh 'npm test'
+    
+                        }
+                        junit allowEmptyResults: true, testResults: 'test-results.xml'
+                    }
+                }
+
             }
         }
     }
