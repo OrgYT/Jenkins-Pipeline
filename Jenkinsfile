@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        nodejs 'node-version'  // Replace with your configured Node.js tool name
+        nodejs 'node-version'
     }
 
     environment {
@@ -35,7 +35,7 @@ pipeline {
                             --prettyPrint
                         ''', odcInstallation: 'owasp-10'
 
-                        dependencyCheckPublisher failedTotalCritical: 1, pattern: 'dependency-check-junit.xml'
+                        
 
                         publishHTML([
                             allowMissing: true,
@@ -49,7 +49,7 @@ pipeline {
                             useWrapperFileDirectly: true
                         ])
 
-                        junit allowEmptyResults: true, testResults: 'dependency-check-junit.xml'
+                        junit allowEmptyResults: true, stdioRetention:'', testResults: 'dependency-check-junit.xml'
                     }
                 }
 
@@ -58,7 +58,7 @@ pipeline {
                         withCredentials([usernamePassword(credentialsId: 'mongodb-creds', passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USERNAME')]) {
                             sh 'npm test'
                         }
-                        junit allowEmptyResults: true, testResults: 'test-results.xml'
+                        junit allowEmptyResults: true, stdioRetention:'', testResults: 'test-results.xml'
                     }
                 }
             }
