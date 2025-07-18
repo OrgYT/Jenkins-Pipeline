@@ -2,15 +2,11 @@ pipeline {
     agent any
 
     tools {
-        nodejs 'node-version'
+        nodejs 'node-version'  // Make sure 'node-version' is defined in Jenkins Global Tools
     }
 
     environment {
-      MONGO_URI = "mongodb+srv://supercluster.d83jj.mongodb.net/superData"
-    }
-    options {
-      disableResume()
-      disableConcurrentBuilds() 
+        MONGO_URI = "mongodb+srv://supercluster.d83jj.mongodb.net/superData"
     }
 
     stages {
@@ -20,37 +16,45 @@ pipeline {
             }
         }
 
-        stage('Security Scanning') {
-            options {timestamps()}
+        stage('Security Scanning & Testing') {
+            options { timestamps() }
             parallel {
                 stage('NPM Audit - Critical Only') {
                     steps {
-                        // Run npm audit with critical level, but don't fail pipeline on vulnerabilities
-                        sh 'npm audit --audit-level=critical'
+                        // Prevent failure from stopping the pipeline
+                        sh 'npm audit --audit-level=critical || true'
                     }
                 }
 
-                
-
                 stage('Unit testing') {
                     steps {
-                        withCredentials([usernamePassword(credentialsId: 'mongodb-credentials', passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USERNAME')]){
+                        withCredentials([usernamePassword(credentialsId: 'mongodb-credentials', passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USERNAME')]) {
                             sh 'npm test'
                         }
-                        junit allowEmptyResults: true, stdioRetention:'', testResults: 'test-results.xml'
+                        junit allowEmptyResults: true, testResults: 'test-results.xml'
                     }
+                }
 
-                stage('code coverage'){
-                    steps{
-                         withCredentials([usernamePassword(credentialsId: 'mongodb-credentials', passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USERNAME')]){
-                             catchError(buildResult: 'SUCCESS', message: 'Build failed', stageResult: 'UNSTABLE') {
-                                  sh 'npm run coverage'
+                stage('Code coverage') {
+                    steps {
+                        withCredentials([usernamePassword(credentialsId: 'mongodb-credentials', passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USERNAME')]) {
+                            catchError(buildResult: 'SUCCESS', message: 'Coverage failed', stageResult: 'UNSTABLE') {
+                                sh 'npm run coverage'
+                            }
                         }
-                           
-                        }
-                         publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'Coverage/lcov-report', reportFiles: 'index.html', reportName: 'Coverage report', reportTitles: 'coverage', useWrapperFileDirectly: true])
-                        
-                        
+
+                        publishHTML([
+                            allowMissing: false,
+                            alwaysLinkToLastBuild: false,
+                            icon: '',
+                            keepAll: false,
+                            reportDir: 'Coverage/lcov-report',
+                            reportFiles: 'index.html',
+                            reportName: 'Coverage report',
+                            reportTitles: 'Coverage',
+                            useWrapperFileDirectly: true
+                        ])
+                    }
                 }
             }
         }
