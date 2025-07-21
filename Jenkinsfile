@@ -49,10 +49,13 @@ pipeline {
 
               stage('SAST'){
                   steps{
-                       $SONARQUBE_CLI/bin/sonar \
-                              -Dsonar.host.url=http://20.244.105.234:9000 \
-                              -Dsonar.token=sqp_65b58329397a98590574453a97acea71e788f7af \
-                              -Dsonar.projectKey=Solar-System-Project
+                       sh '''
+                        $SONARQUBE_CLI/bin/sonar \
+                            -Dsonar.projectKey=Solar-System-Project \
+                            -Dsonar.sources=. \
+                            -Dsonar.host.url=http://20.244.105.234:9000 \
+                            -Dsonar.login=sqp_65b58329397a98590574453a97acea71e788f7af
+                         '''
 
             post {
                 always {
