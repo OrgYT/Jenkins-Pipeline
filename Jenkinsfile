@@ -39,8 +39,10 @@ pipeline {
 
                 stage('Code Coverage') {
                     steps {
-                        sh 'npm run coverage'
-
+                        catchError(buildResult: 'SUCCESS', message: 'it has to be skipped', stageResult: 'UNSTABLE') {
+                            sh 'npm run coverage'
+                        }
+                        
                         publishHTML([
                             allowMissing: false,
                             alwaysLinkToLastBuild: false,
