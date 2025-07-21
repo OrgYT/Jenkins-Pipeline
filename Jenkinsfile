@@ -2,11 +2,12 @@ pipeline {
     agent any
 
     tools {
-        nodejs 'node-version'  // Make sure 'node-version' is defined in Jenkins Global Tools
+        nodejs 'node-version' // Ensure 'node-version' is defined in Jenkins Global Tools
     }
 
     environment {
         MONGO_URI = "mongodb+srv://supercluster.d83jj.mongodb.net/superData"
+        MONGO_CREDS = credentials('mongodb-credentials')
     }
 
     stages {
@@ -22,41 +23,22 @@ pipeline {
                 stage('NPM Audit - Critical Only') {
                     steps {
                         // Prevent failure from stopping the pipeline
-                        sh 'npm audit --audit-level=critical || true'
+                        sh 'npm audit --audit-level=critical '
                     }
                 }
 
-                stage('Unit testing') {
+                stage('Unit Testing') {
                     steps {
-                        withCredentials([usernamePassword(credentialsId: 'mongodb-credentials', passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USERNAME')]) {
-                            sh 'npm test'
-                        }
+                        sh 'npm test'
                         junit allowEmptyResults: true, testResults: 'test-results.xml'
                     }
                 }
 
-                stage('Code coverage') {
+                stage('Code Coverage') {
                     steps {
-                        withCredentials([usernamePassword(credentialsId: 'mongodb-credentials', passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USERNAME')]) {
-                            catchError(buildResult: 'SUCCESS', message: 'Coverage failed', stageResult: 'UNSTABLE') {
-                                sh 'npm run coverage'
-                            }
-                        }
+                        sh 'npm coverage'
 
                         publishHTML([
                             allowMissing: false,
                             alwaysLinkToLastBuild: false,
                             icon: '',
-                            keepAll: false,
-                            reportDir: 'coverage/lcov-report',
-                            reportFiles: 'index.html',
-                            reportName: 'Coverage report',
-                            reportTitles: 'Coverage',
-                            useWrapperFileDirectly: true
-                        ])
-                    }
-                }
-            }
-        }
-    }
-}
