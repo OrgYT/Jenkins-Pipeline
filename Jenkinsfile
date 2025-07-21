@@ -38,7 +38,7 @@ pipeline {
 
                 stage('Code Coverage') {
                     steps {
-                        sh 'npm coverage'
+                        sh 'npm run coverage'
 
                         publishHTML([
                             allowMissing: false,
