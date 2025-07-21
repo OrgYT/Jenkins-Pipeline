@@ -24,12 +24,13 @@ pipeline {
                 stage('NPM Audit - Critical Only') {
                     steps {
                         // Prevent failure from stopping the pipeline
-                        sh 'npm audit --audit-level=critical || true'
+                        sh 'npm audit --audit-level=critical '
                     }
                 }
 
                 stage('Unit Testing') {
                     steps {
+                        sh 'echo username - $MONGO_CREDS_USR'
                         sh 'npm test'
                         junit allowEmptyResults: true, testResults: 'test-results.xml'
                     }
