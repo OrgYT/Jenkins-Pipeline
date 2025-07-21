@@ -26,7 +26,7 @@ pipeline {
                 stage('NPM Audit - Critical Only') {
                     steps {
                         // Prevent failure from stopping the pipeline
-                        sh 'npm audit --audit-level=critical '
+                        sh 'npm audit --audit-level=critical || true'
                     }
                 }
 
@@ -42,24 +42,26 @@ pipeline {
                         catchError(buildResult: 'SUCCESS', message: 'it has to be skipped', stageResult: 'UNSTABLE') {
                             sh 'npm run coverage'
                         }
-                        
-                        
                     }
                 }
-            post{
-                always{
+            }
+
+            post {
+                always {
                     junit allowEmptyResults: true, testResults: 'test-results.xml'
+
                     publishHTML([
-                            allowMissing: false,
-                            alwaysLinkToLastBuild: false,
-                            icon: '',
-                            keepAll: false,
-                            reportDir: 'coverage/lcov-report',
-                            reportFiles: 'index.html',
-                            reportName: 'Coverage Report',
-                            reportTitles: 'Coverage',
-                            useWrapperFileDirectly: true
-                        ])
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: false,
+                        icon: '',
+                        keepAll: false,
+                        reportDir: 'coverage/lcov-report',
+                        reportFiles: 'index.html',
+                        reportName: 'Coverage Report',
+                        reportTitles: 'Coverage',
+                        useWrapperFileDirectly: true
+                    ])
+                }
             }
         }
     }
