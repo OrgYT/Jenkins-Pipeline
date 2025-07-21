@@ -43,7 +43,13 @@ pipeline {
                             sh 'npm run coverage'
                         }
                         
-                        publishHTML([
+                        
+                    }
+                }
+            post{
+                always{
+                    junit allowEmptyResults: true, testResults: 'test-results.xml'
+                    publishHTML([
                             allowMissing: false,
                             alwaysLinkToLastBuild: false,
                             icon: '',
@@ -54,8 +60,6 @@ pipeline {
                             reportTitles: 'Coverage',
                             useWrapperFileDirectly: true
                         ])
-                    }
-                }
             }
         }
     }
