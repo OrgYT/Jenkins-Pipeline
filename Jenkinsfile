@@ -10,7 +10,7 @@ pipeline {
         MONGO_CREDS = credentials('mongodb-credentials')
         MONGO_USERNAME = credentials('MONGO_USER')
         MONGO_PASSWORD = credentials('MONGO-PASSWORD')
-        SONARQUBE_CLI - tools 'sonarqube-7.1.0';
+        SONARQUBE_CLI = tools 'sonarqube-7.1.0';
     }
 
     stages {
