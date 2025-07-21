@@ -10,7 +10,6 @@ pipeline {
         MONGO_CREDS = credentials('mongodb-credentials')
         MONGO_USERNAME = credentials('MONGO_USER')
         MONGO_PASSWORD = credentials('MONGO-PASSWORD')
-        SONAR_CLI = tools('sonarqube-7.1.0') // Secure SonarQube token
     }
 
     stages {
@@ -51,20 +50,10 @@ pipeline {
                         }
                     }
                 }
-            }
-        }
 
-        stage('SAST (SonarQube)') {
-            steps {
-                withSonarQubeEnv('MySonarQubeServer') { // Make sure this is configured in Jenkins
-                    sh '''
-                        sonar-scanner \
-                          -Dsonar.projectKey=Solar-System-Project \
-                          -Dsonar.sources=. \
-                          -Dsonar.host.url=http://20.244.105.234:9000 \
-                          -Dsonar.login=sqp_aadda9e372a85262068e785c249acc0aa10e9c4f
-                    '''
-                }
+                stage('SAST'){
+                    steps{
+                        
             }
         }
     }
