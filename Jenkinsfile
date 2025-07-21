@@ -10,7 +10,7 @@ pipeline {
         MONGO_CREDS = credentials('mongodb-credentials')
         MONGO_USERNAME = credentials('MONGO_USER')
         MONGO_PASSWORD = credentials('MONGO-PASSWORD')
-        SONARQUBE_CLI = tools 'sonarqube-7.1.0';
+        // SONARQUBE_CLI can't be set via tools here
     }
 
     stages {
@@ -26,8 +26,7 @@ pipeline {
             parallel {
                 stage('NPM Audit - Critical Only') {
                     steps {
-                        // Prevent failure from stopping the pipeline
-                        sh 'npm audit --audit-level=critical || true'
+                        sh 'npm audit --audit-level=critical'
                     }
                 }
 
@@ -46,34 +45,37 @@ pipeline {
                     }
                 }
             }
+        }
 
-              stage('SAST'){
-                  steps{
-                       sh '''
-                        $SONARQUBE_CLI/bin/sonar \
-                            -Dsonar.projectKey=Solar-System-Project \
-                            -Dsonar.sources=. \
-                            -Dsonar.host.url=http://20.244.105.234:9000 \
-                            -Dsonar.login=sqp_65b58329397a98590574453a97acea71e788f7af
-                         '''
-
-            post {
-                always {
-                    junit allowEmptyResults: true, testResults: 'test-results.xml'
-
-                    publishHTML([
-                        allowMissing: false,
-                        alwaysLinkToLastBuild: false,
-                        icon: '',
-                        keepAll: false,
-                        reportDir: 'coverage/lcov-report',
-                        reportFiles: 'index.html',
-                        reportName: 'Coverage Report',
-                        reportTitles: 'Coverage',
-                        useWrapperFileDirectly: true
-                    ])
-                }
+        stage('SAST') {
+            steps {
+                // Replace the sonar-scanner path with the correct tool location or use a global tool
+                sh '''
+                    sonar-scanner \
+                        -Dsonar.projectKey=Solar-System-Project \
+                        -Dsonar.sources=. \
+                        -Dsonar.host.url=http://20.244.105.234:9000 \
+                        -Dsonar.login=sqp_65b58329397a98590574453a97acea71e788f7af
+                '''
             }
+        }
+    }
+
+    post {
+        always {
+            junit allowEmptyResults: true, testResults: 'test-results.xml'
+
+            publishHTML([
+                allowMissing: false,
+                alwaysLinkToLastBuild: false,
+                icon: '',
+                keepAll: false,
+                reportDir: 'coverage/lcov-report',
+                reportFiles: 'index.html',
+                reportName: 'Coverage Report',
+                reportTitles: 'Coverage',
+                useWrapperFileDirectly: true
+            ])
         }
     }
 }
