@@ -9,7 +9,7 @@ pipeline {
         MONGO_URI = "mongodb+srv://supercluster.d83jj.mongodb.net/superData"
         MONGO_CREDS = credentials('mongodb-credentials')
         MONGO_USERNAME = credentials('MONGO_USER')
-        MONGO_PASS = credentials('MONGO_PASSWORD')
+        MONGO_PASS = credentials('MONGO-PASSWORD')
     }
 
     stages {
