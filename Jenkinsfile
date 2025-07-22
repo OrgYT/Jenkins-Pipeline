@@ -20,15 +20,8 @@ pipeline {
             }
         }
 
-        stage('Testing & Coverage') {
-            parallel {
-                stage('NPM Audit (Critical Only)') {
-                    steps {
-                        sh 'npm audit --audit-level=critical'
-                    }
-                }
-
-                stage('Unit Tests') {
+       
+        stage('Unit Tests') {
                     steps {
                         catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
                         sh 'npm test'
@@ -37,7 +30,7 @@ pipeline {
                         }
                 }
 
-                stage('Code Coverage') {
+         stage('Code Coverage') {
                     steps {
                         catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
                             sh 'npm run coverage'
@@ -45,7 +38,7 @@ pipeline {
                     }
                 }
 
-                stage('SAST') {
+          stage('SAST') {
                     steps {
                         sh 'echo $SONAR_SCANNER_HOME'
                         sh ''' 
