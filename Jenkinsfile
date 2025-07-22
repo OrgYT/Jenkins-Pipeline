@@ -10,7 +10,7 @@ pipeline {
         MONGO_CREDS = credentials('mongodb-credentials')
         MONGO_USERNAME = credentials('MONGO_USER')
         MONGO_PASSWORD = credentials('MONGO-PASSWORD')
-        SONAR_SCANNER_HOME = tool 'sonar-7.2';
+        SONAR_SCANNER_HOME = tool 'sonar-7.2'
     }
 
     stages {
@@ -24,7 +24,7 @@ pipeline {
             parallel {
                 stage('NPM Audit (Critical Only)') {
                     steps {
-                        sh 'npm audit --audit-level=critical || true'
+                        sh 'npm audit --audit-level=critical'
                     }
                 }
 
@@ -40,7 +40,6 @@ pipeline {
                                   --exit
                             '''
                         }
-                        junit allowEmptyResults: true, testResults: 'reports/test-results.xml'
                     }
                 }
 
@@ -52,17 +51,18 @@ pipeline {
                     }
                 }
 
-                stage('SAST'){
-                    steps{
+                stage('SAST') {
+                    steps {
                         sh 'echo $SONAR_SCANNER_HOME'
-                        sh''' 
+                        sh ''' 
                             $SONAR_SCANNER_HOME/bin/sonar \
                               -Dsonar.host.url=http://20.244.105.234:9000 \
                               -Dsonar.token=sqp_d8bd61f98cb3d7e6a978e2b0cc853d25964876d7 \
-                              -Dsonar.projectKey=Solar-system
+                              -Dsonar.projectKey=Solar-system \
                               -Dsonar.source=./
                         '''
-                        
+                    }
+                }
             }
         }
     }
