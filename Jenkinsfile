@@ -31,16 +31,10 @@ pipeline {
                 stage('Unit Tests') {
                     steps {
                         catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-                            sh '''
-                                mkdir -p reports
-                                mocha app-test.js \
-                                  --timeout 10000 \
-                                  --reporter mocha-junit-reporter \
-                                  --reporter-options mochaFile=reports/test-results.xml \
-                                  --exit
-                            '''
+                        sh 'npm test'
+                          }
+                        junit allowEmptyResults: true, testResults: 'reports/test-results.xml'
                         }
-                    }
                 }
 
                 stage('Code Coverage') {
@@ -69,7 +63,7 @@ pipeline {
 
     post {
         always {
-            junit allowEmptyResults: true, testResults: 'reports/test-results.xml'
+            
 
             publishHTML([
                 allowMissing: false,
