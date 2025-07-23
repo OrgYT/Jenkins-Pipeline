@@ -23,7 +23,10 @@ pipeline {
         stage('Unit Tests') {
             steps {
                 sh 'npm test'
-                junit allowEmptyResults: true, testResults: 'reports/test-results.xml'
+                junit(
+                    testResults: 'reports/test-results.xml',
+                    allowEmptyResults: true
+                )
             }
         }
 
@@ -32,7 +35,7 @@ pipeline {
                 catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
                     sh 'npm run coverage'
                 }
-                
+                // You may add HTML coverage reporting here if needed
             }
         }
 
@@ -50,7 +53,14 @@ pipeline {
                     '''
                 }
 
-                waitForQualityGate abortPipeline:true
+                waitForQualityGate abortPipeline: true
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                sh 'printenv'
+                sh 'docker build -t knightfury285/solar-system:$GIT_COMMIT .'
             }
         }
     }
