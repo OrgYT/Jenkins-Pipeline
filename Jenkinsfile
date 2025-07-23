@@ -42,7 +42,7 @@ pipeline {
             steps {
                 sh 'echo $SONAR_SCANNER_HOME'
 
-                withSonarQubeEnv(credentialsId: 'Sonar-servertoken') {
+                withSonarQubeEnv('sonarqube') {
                     sh '''
                         $SONAR_SCANNER_HOME/bin/sonar-scanner \
                         -Dsonar.host.url=http://20.244.105.234:9000 \
