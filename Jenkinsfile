@@ -32,9 +32,7 @@ pipeline {
                 catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
                     sh 'npm run coverage'
                 }
-                // Note: This line seems incorrect; `junit` expects JUnit XML, not an HTML file
-                // Consider removing or correcting:
-                 junit allowEmptyResults: true, testResults: 'index.html'
+                
             }
         }
 
@@ -52,7 +50,7 @@ pipeline {
                     '''
                 }
 
-                waitForQualityGate abortPipeline: false, credentialsId: 'Sonar-servertoken'
+                waitForQualityGate abortPipeline:true
             }
         }
     }
